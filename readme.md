@@ -41,7 +41,7 @@ Given the high-frequency data ingestion from numerous devices, NodeJS's superior
 ## 2. Database
 
 ### Options Considered:
-1. PostgreSQL
+1. PostgreSQL with TimescaleDB extension
 2. InfluxDB
 
 ### Considerations:
@@ -50,23 +50,42 @@ Given the high-frequency data ingestion from numerous devices, NodeJS's superior
 - Built-in time-series functionality
 - Query performance for time-based aggregations
 - Data retention policies
+- Flexibility for future feature additions
+- Familiarity and ecosystem support
 
-### Decision: InfluxDB
+### Decision: PostgreSQL with TimescaleDB
 
 #### Pros:
-- Optimized for time-series data and high write throughput
-- Built-in functions for time-based aggregations
-- Efficient data compression
-- Flexible data retention policies
-- Designed for horizontal scalability
+- Combines the power of a traditional RDBMS with optimizations for time-series data
+- Strong ACID compliance and transaction support (no data loss was a requirement during design discussions with team)
+- Rich querying capabilities with full SQL support
+- TimescaleDB can provide efficient time-based functions and automatic partitioning
+- Widely adopted with a large ecosystem and community support
+- Flexibility to handle both time-series and relational data
+- Scalable from single-node to multi-node clusters
+- Supports continuous aggregates for efficient real-time analytics
+- Compatible with PostGIS for geospatial data handling
 
 #### Cons:
-- Less familiar than traditional relational databases, less established and versatile than Postgres (feature extensability needs of this system are unknown)
-- Limited support for complex joins and transactions
+- May require more configuration and tuning compared to purpose-built time-series databases
+- Raw write performance at extreme scales might be lower than specialized time-series databases
 
 #### Rationale:
-InfluxDB's specialization in time-series data aligns perfectly with our use case of frequent temperature readings. Its high write performance and built-in time-based aggregations are crucial for our system's requirements. This might be rethought with more information around future features that might need support.
+While InfluxDB offers excellent performance for time-series data, PostgreSQL with TimescaleDB provides a more versatile solution that balances performance with flexibility. The decision to use PostgreSQL with TimescaleDB is based on several factors:
 
+1. Time-series Optimization: TimescaleDB provides the necessary optimizations for efficient storage and querying of time-series data, including automatic partitioning and efficient time-based aggregations.
+
+2. Flexibility: As the full feature set and future requirements of the system are not yet known, PostgreSQL's ability to handle various data models and complex queries provides valuable flexibility for future expansion.
+
+3. Familiarity and Ecosystem: PostgreSQL's widespread adoption means it's easier to find developers familiar with it, and it has a rich ecosystem of tools and extensions.
+
+4. SQL Support: Full SQL support allows for complex queries and joins, which may be beneficial as the system evolves.
+
+5. Scalability: TimescaleDB can scale from a single node to a distributed multi-node setup, accommodating growth in data volume and query complexity.
+
+6. Data Retention and Aggregation: TimescaleDB offers features like continuous aggregates and data retention policies, crucial for managing long-term data storage and real-time analytics.
+
+While InfluxDB might offer superior write performance at extreme scales, the combination of PostgreSQL and TimescaleDB is expected to meet our performance requirements while providing greater flexibility for future development. The trade-off of slightly lower raw write performance is balanced by the benefits of a more versatile and familiar database system.
 ## 3. API Design
 
 ### Decision: RESTful API using Express.js
