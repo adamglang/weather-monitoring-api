@@ -2,7 +2,9 @@
 
 ## Setup and run
 
-## 1.
+1. Make sure docker is installed on your machine, then from the root directory run the following command to start postgres with timescaleDB: `docker-compose up --build`
+
+2. run a chmod +x run-prisma.sh to make migration script executable (don't need this to run the api but if you want to make changes to the schema and run the migration script)
 
 
 ## Technology Choices and Rationale
@@ -36,7 +38,7 @@
 - Slightly steeper learning curve compared to Python overall (especially typescript)
 
 #### Rationale:
-Given the high-frequency data ingestion from numerous devices, NodeJS's superior handling of concurrent connections was the deciding factor. TypeScript adds type safety, improving maintainability and reducing runtime errors.
+Given the high-frequency data ingestion from numerous devices, NodeJS's superior handling of concurrent connections was the deciding factor particularly when considering the traffic involved in data ingestion given the number of monitoring devices (approaching a million polled every 5 seconds). TypeScript adds type safety, improving maintainability and reducing runtime errors.
 
 ## 2. Database
 

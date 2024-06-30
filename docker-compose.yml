@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg12
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      weather-monitoring-network:
+        aliases:
+          - database
+
+  prisma:
+    build: .
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    depends_on:
+      - db
+    networks:
+      - weather-monitoring-network
+
+networks:
+  weather-monitoring-network:
+    name: weather-monitoring-network
+
+volumes:
+  pgdata:
