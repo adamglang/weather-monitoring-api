@@ -4,7 +4,15 @@
 
 1. Make sure docker is installed on your machine, then from the root directory run the following command to start postgres with timescaleDB: `docker-compose up --build`
 
-2. run a chmod +x run-prisma.sh to make migration script executable (don't need this to run the api but if you want to make changes to the schema and run the migration script)
+2. Run the migration script to create the tables in the database: `yarn migrate:dev`
+
+3. Start the api server: `yarn start:api`
+
+4. Run the seed script to populate the tables with some data: `yarn seed` (this will create a subset of devices, and then hit the temp readings endpoint to generate a bunch of mock readings for them through pubsub) alternatively you can hit the following endpoints:
+    - `POST /api/devices` to create a device
+    - `POST /api/temperature-readings` to create a temperature reading
+5. You can get the temperature readings for a device by hitting the following endpoint: `GET /api/temperature-readings/:deviceId`
+6. You can get the average temperature readings for a device by hitting the following endpoint: `GET /api/temperature-readings/:deviceId/average`
 
 
 ## Technology Choices and Rationale

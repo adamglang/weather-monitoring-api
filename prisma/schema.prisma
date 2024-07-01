@@ -4,6 +4,10 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+enum DeviceType {
+  weather_monitor
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -13,17 +17,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Device {
+model device {
   id         String   @id @default(uuid())
   enrolledAt DateTime @default(now())
-  readings   TemperatureReading[]
+  type       DeviceType @default(weather_monitor)
+  serial     String   @unique
+  readings   temperature_reading[]
 }
 
-model TemperatureReading {
+model temperature_reading {
   id          Int      @id @default(autoincrement())
   temperature Float
   timestamp   DateTime @default(now())
-  device      Device   @relation(fields: [deviceId], references: [id])
+  location    Json?    // { latitude: number, longitude: number }
+  device      device   @relation(fields: [deviceId], references: [id])
   deviceId    String
 
   @@index([deviceId, timestamp(sort: Desc)])

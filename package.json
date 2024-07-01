@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node dist/server.js",
     "prisma": "docker-compose run --rm prisma prisma",
+    "migrate:dev": "docker-compose run --rm prisma prisma migrate dev",
+    "migrate:deploy": "docker-compose run --rm prisma prisma migrate deploy",
+    "migrate:create": "docker-compose run --rm prisma prisma migrate dev --create-only",
     "build": "tsc",
     "dev": "ts-node-dev src/server.ts",
     "test": "jest"
