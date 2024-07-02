@@ -14,7 +14,6 @@ export class EnrollmentService {
         timeZone: timeZone,
         longitude: deviceData.longitude,
         id: uuidv4(),
-        type: 'weather_monitor',
         enrolledAt: new Date(),
     };
 

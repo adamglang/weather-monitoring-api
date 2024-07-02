@@ -2,17 +2,36 @@
 
 ## Setup and run
 
-1. Make sure docker is installed on your machine, then from the root directory run the following command to start postgres with timescaleDB: `docker-compose up --build`
+- Make sure docker is installed on your machine, then from the root directory run the following command to start the containers: `docker-compose up -d --build` once all the images build and start the endpoints should be accessable on `http://localhost:3000`
+- Make a POST request to http://localhost:3000/auth/login with the following payload to get a token (I used postman for this):
+```json
+{
+    "username": "admin",
+    "password": "admin"
+}
+```
 
-2. Run the migration script to create the tables in the database: `yarn migrate:dev`
+This should send back your authentication token which you'll add to the authentication header as a Bearer Token for all subsequent requests.
 
-3. Start the api server: `yarn start:api`
+- You can add a device by making a POST request to `http://localhost:3000/api/devices` with the following payload:
+```json
+{
+    "serial": "098765", // Must be unique
+    "latitude": 47.6061, // latitude and longitude will change the timezone of the device which affects daily statistics
+    "longitude": -122.3328
+}
+```
 
-4. Run the seed script to populate the tables with some data: `yarn seed` (this will create a subset of devices, and then hit the temp readings endpoint to generate a bunch of mock readings for them through pubsub) alternatively you can hit the following endpoints:
-    - `POST /api/devices` to create a device
-    - `POST /api/temperature-readings` to create a temperature reading
-5. You can get the temperature readings for a device by hitting the following endpoint: `GET /api/temperature-readings/:deviceId`
-6. You can get the average temperature readings for a device by hitting the following endpoint: `GET /api/temperature-readings/:deviceId/average`
+- To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload:
+```json
+{
+    "deviceId": {deviceId}, // The id of the device you created
+    "temperature": 45.44 // Any floating point number
+}
+```
+Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
+
+- After adding some temperature readings to one or more device, you can get the daily stats for a device by making a GET request to `http://localhost:3000/api/devices/{deviceId}/daily-stats`
 
 
 ## Technology Choices and Rationale
