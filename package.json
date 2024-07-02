@@ -4,31 +4,43 @@
   "description": "REST API service for a weather monitoring system",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
-    "prisma": "docker-compose run --rm prisma prisma",
-    "migrate:dev": "docker-compose run --rm prisma prisma migrate dev",
-    "migrate:deploy": "docker-compose run --rm prisma prisma migrate deploy",
-    "migrate:create": "docker-compose run --rm prisma prisma migrate dev --create-only",
+    "start": "node dist/app.js",
+    "start:dev": "ts-node-dev src/app.ts",
+    "start:processor": "node dist/processors/temperatureReadingProcessor.js",
+    "prisma": "prisma",
+    "prisma:generate": "prisma generate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:create": "prisma migrate dev --create-only",
     "build": "tsc",
     "dev": "ts-node-dev src/server.ts",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
-    "@google-cloud/pubsub": "^2.19.0",
     "@prisma/client": "^5.16.1",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.14.1",
+    "eslint": "^8.0.1",
     "express": "^4.17.1",
+    "geo-tz": "^8.0.2",
+    "jsonwebtoken": "^9.0.0",
+    "kafkajs": "^2.2.4",
+    "moment-timezone": "^0.5.45",
     "pg": "^8.7.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/jest": "^27.0.3",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^16.11.12",
     "@types/uuid": "^8.3.3",
     "jest": "^27.4.5",
     "prisma": "^5.16.1",
     "ts-jest": "^27.1.1",
-    "ts-node-dev": "^1.1.8",
-    "typescript": "^4.5.3"
+    "ts-node-dev": "^2.0.0",
+    "typescript": "*"
   }
 }
