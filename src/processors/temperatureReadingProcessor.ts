@@ -20,8 +20,7 @@ async function processTemperatureReading(message: KafkaMessage): Promise<void> {
     }) as EnrolledDeviceRecord;
 
     if (!device) {
-      console.error(`Device not found: ${data.deviceId} - reading must come from an enrolled device!`);
-      return;
+      throw new Error(`Device not found: ${data.deviceId} - reading must come from an enrolled device!`);
     }
 
     const payload: TemperatureReadingDTO = {
@@ -66,11 +65,18 @@ async function updateDailyStats(device: EnrolledDeviceDTO, reading: TemperatureR
   });
 
   if (existingStats) {
-    // Use type assertion here
+    let avgTemp: number;
+
+    if (readingCount === 1) {
+      avgTemp = (existingStats.avgTemp + reading.temperature) / 2;
+    } else {
+      avgTemp = (existingStats.avgTemp * (readingCount - 1) + reading.temperature) / readingCount;
+    }
+
     const payload: Partial<DailyTemperatureStatsDTO> = {
       highTemp: Math.max(existingStats.highTemp, reading.temperature),
       lowTemp: Math.min(existingStats.lowTemp, reading.temperature),
-      avgTemp: (existingStats.avgTemp * readingCount + reading.temperature) / (readingCount + 1),
+      avgTemp,
     }
 
     // Update existing stats
