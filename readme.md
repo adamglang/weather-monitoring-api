@@ -2,8 +2,8 @@
 
 ## Setup and run
 
-- Make sure docker is installed on your machine, then from the root directory run the following command to start the containers: `docker-compose up -d --build` once all the images build and start the endpoints should be accessable on `http://localhost:3000`
-- Make a POST request to http://localhost:3000/auth/login with the following payload to get a token (I used postman for this):
+1. ####  Make sure docker is installed on your machine, then from the root directory run the following command to start the containers: `docker-compose up -d --build` once all the images build and start the endpoints should be accessable on `http://localhost:3000`
+2. #### Make a POST request to http://localhost:3000/auth/login with the following payload to get a token (I used postman for this) This should send back your authentication token which you'll add to the authentication header as a Bearer Token for all subsequent requests.
 ```json
 {
     "username": "admin",
@@ -11,9 +11,7 @@
 }
 ```
 
-This should send back your authentication token which you'll add to the authentication header as a Bearer Token for all subsequent requests.
-
-- You can add a device by making a POST request to `http://localhost:3000/api/devices` with the following payload:
+3. #### You can add a device by making a POST request to `http://localhost:3000/api/devices` with the following payload:
 ```json
 {
     "serial": "098765", // Must be unique
@@ -22,17 +20,20 @@ This should send back your authentication token which you'll add to the authenti
 }
 ```
 
-- To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload:
+4. #### To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload - Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
 ```json
 {
     "deviceId": {deviceId}, // The id of the device you created
     "temperature": 45.44 // Any floating point number
 }
 ```
-Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
 
-- After adding some temperature readings to one or more device, you can get the current day's stats for a device by making a GET request to `http://localhost:3000/daily-stats/{deviceId}` or request a specific day via `http://localhost:3000/daily-stats/{deviceId}?date=01-01-2024` where the date is in the format `DD-MM-YYYY`
 
+5. #### After adding some temperature readings to one or more device, you can get the current day's stats for a device by making a GET request to `http://localhost:3000/daily-stats/{deviceId}` which defaults to today, or request a specific day via `http://localhost:3000/daily-stats/{deviceId}?date=01-01-2024` where the date is in the format `DD-MM-YYYY`
+
+6. #### Run the tests with ```yarn test```
+
+7. #### Feel free to try to break things. The requirements were met, and I added sensible validation but I may have missed something!
 
 ## Technology Choices and Rationale
 
@@ -54,7 +55,7 @@ Adding more of these will update the daily stats average, and possibly the daily
 
 #### Pros:
 - Excellent handling of concurrent connections via event-driven, non-blocking I/O
-- Strong typing with TypeScript enhances code quality and maintainability
+- Strong typing with TypeScript enhances code quality, data integrity and maintainability
 - Native JSON support for efficient API responses
 - Large ecosystem with well-maintained libraries
 - Efficient for I/O-bound operations
@@ -115,14 +116,44 @@ While InfluxDB offers excellent performance for time-series data, PostgreSQL wit
 6. Data Retention and Aggregation: TimescaleDB offers features like continuous aggregates and data retention policies, crucial for managing long-term data storage and real-time analytics.
 
 While InfluxDB might offer superior write performance at extreme scales, the combination of PostgreSQL and TimescaleDB is expected to meet our performance requirements while providing greater flexibility for future development. The trade-off of slightly lower raw write performance is balanced by the benefits of a more versatile and familiar database system.
-## 3. API Design
+
+## 3. Event Ingestion Queue
+
+### Options Considered:
+1. Apache Kafka
+2. Google Pub/Sub
+
+### Considerations:
+- Scalability and performance for high-frequency data ingestion
+- Ease of setup and maintenance
+- Horizontal scalability for future growth
+- Cloud-based vs. local setup
+- Developer familiarity and ecosystem support
+
+### Decision: Apache Kafka
+
+#### Pros:
+- High throughput for real-time event streaming
+- Horizontal scalability for managing large volumes of data
+- Strong ecosystem with various tools for data processing and integration
+- Reliable and fault-tolerant architecture
+
+#### Cons:
+- Requires more initial setup and configuration compared to cloud-based solutions
+- Management of Kafka clusters can be complex without managed services
+
+#### Rationale:
+The decision to use Apache Kafka for the event ingestion queue was driven by the need for a robust, scalable solution capable of handling high-frequency data ingestion from approximately a million devices every 5 seconds. While a cloud-based service like Google Pub/Sub would typically be preferred for its ease of scaling and management, the absence of shared cloud credentials necessitated a local setup. Kafka's ability to handle large-scale, real-time event streaming efficiently made it the best choice for this coding challenge. Its reliability and strong ecosystem also provide the necessary foundation for future expansion and integration with other data processing tools.
+
+
+## 4. API Design
 
 ### Decision: RESTful API using Express.js
 
 #### Rationale:
 Requirements doc calls for REST and Express.js is a popular, established, lightweight framework for building APIs in Node.js. It provides a simple, flexible way to define routes and middleware, making it easy to build and maintain a RESTful API.
 
-## 4. Development and Deployment
+## 5. Development and Deployment
 
 ### Decisions:
 - Docker for containerization
