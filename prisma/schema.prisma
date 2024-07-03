@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+enum DeviceType {
+  weather_monitor
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model device {
+  id         String   @id @default(uuid())
+  enrolledAt DateTime @default(now())
+  type       DeviceType @default(weather_monitor)
+  serial     String   @unique
+  timeZone   String   @default("UTC")
+  latitude   Float
+  longitude  Float
+  readings   temperature_reading[]
+  dailyStats daily_temperature_stats[]
+}
+
+model temperature_reading {
+  id          Int      @id @default(autoincrement())
+  temperature Float
+  timestamp   DateTime @default(now())
+  device      device   @relation(fields: [deviceId], references: [id])
+  deviceId    String
+
+  @@index([deviceId, timestamp(sort: Desc)])
+}
+
+model daily_temperature_stats {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  highTemp    Float
+  lowTemp     Float
+  avgTemp     Float
+  device      device   @relation(fields: [deviceId], references: [id])
+  deviceId    String
+
+  @@unique([deviceId, date])
+}
