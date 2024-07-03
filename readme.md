@@ -7,7 +7,7 @@
 ```json
 {
     "username": "admin",
-    "password": "admin"
+    "password": "password"
 }
 ```
 
