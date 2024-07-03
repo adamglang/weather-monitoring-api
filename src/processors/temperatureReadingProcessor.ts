@@ -11,10 +11,9 @@ import { Moment } from "moment-timezone";
 
 const prisma = new PrismaClient();
 
-async function processTemperatureReading(message: KafkaMessage): Promise<void> {
+export async function processTemperatureReading(message: KafkaMessage): Promise<void> {
   try {
     const data: TemperatureReadingDTO = JSON.parse(message.value?.toString() || '');
-
     const device: EnrolledDeviceRecord = await prisma.device.findUnique({
       where: { id: data.deviceId }
     }) as EnrolledDeviceRecord;
@@ -27,7 +26,7 @@ async function processTemperatureReading(message: KafkaMessage): Promise<void> {
       temperature: data.temperature,
       deviceId: data.deviceId,
       timestamp: new Date(data.timestamp)
-    }
+    };
 
     await prisma.temperature_reading.create({ data: payload });
 
@@ -102,7 +101,7 @@ async function updateDailyStats(device: EnrolledDeviceDTO, reading: TemperatureR
   }
 }
 
-async function startConsumer(): Promise<void> {
+export async function startConsumer(): Promise<void> {
   await consumer.connect();
   await consumer.subscribe({ topic: 'temperature-readings', fromBeginning: true });
   await consumer.run({

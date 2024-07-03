@@ -14,7 +14,7 @@
     "migrate:create": "prisma migrate dev --create-only",
     "build": "tsc",
     "dev": "ts-node-dev src/server.ts",
-    "test": "jest",
+    "test": "KAFKAJS_NO_PARTITIONER_WARNING=1 jest",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },
@@ -34,13 +34,15 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
-    "@types/jest": "^27.0.3",
+    "@types/jest": "27",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^16.11.12",
+    "@types/supertest": "^6.0.2",
     "@types/uuid": "^8.3.3",
-    "jest": "^27.4.5",
+    "jest": "27",
     "prisma": "^5.16.1",
-    "ts-jest": "^27.1.1",
+    "supertest": "^7.0.0",
+    "ts-jest": "27",
     "ts-node-dev": "^2.0.0",
     "typescript": "*"
   }

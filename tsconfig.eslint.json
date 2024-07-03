@@ -6,5 +6,5 @@
     "test/**/*.ts",
     "test/**/*.js",
     ".eslintrc.js"
-  ]
+  ],
 }

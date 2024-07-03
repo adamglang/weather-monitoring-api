@@ -8,18 +8,11 @@ const router: Router = express.Router();
 
 router.post('/', authenticateToken, validateEnrollmentRequest, async (req: Request, res: Response): Promise<void> => {
   try {
-    const devices: EnrollmentRequestDTO | EnrollmentRequestDTO[] = req.body;
-
-    if (Array.isArray(devices)) {
-      const enrolledDevices: EnrolledDeviceDTO[] = await EnrollmentService.enrollMultipleDevices(devices);
-      res.status(201).json(enrolledDevices);
-    } else {
-      const enrolledDevice: EnrolledDeviceDTO = await EnrollmentService.enrollDevice(devices);
-      res.status(201).json(enrolledDevice);
-    }
+    const devices: EnrollmentRequestDTO[] = req.body;
+    const enrolledDevices: EnrolledDeviceDTO[] = await EnrollmentService.enrollMultipleDevices(devices);
+    res.status(201).json(enrolledDevices);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: `An error occurred while enrolling devices. Trace: ${error}` });
+    res.status(500).json({ error: `An error occurred while enrolling devices. Trace: ${error instanceof Error ? error.message : String(error)}` });
   }
 });
 

@@ -21,8 +21,6 @@ router.get('/:deviceId', validateDailyStatsRequest, async (req: Request, res: Re
       return res.status(404).json({ error: 'Device not found' });
     }
 
-    console.log('Device timezone:', device.timeZone);
-
     let queryDateLocal;
 
     if (dateQuery) {
