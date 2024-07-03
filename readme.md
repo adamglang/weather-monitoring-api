@@ -2,8 +2,8 @@
 
 ## Setup and run
 
-1. ####  Make sure docker is installed on your machine, then from the root directory run the following command to start the containers: `docker-compose up -d --build` once all the images build and start the endpoints should be accessable on `http://localhost:3000`
-2. #### Make a POST request to http://localhost:3000/auth/login with the following payload to get a token (I used postman for this) This should send back your authentication token which you'll add to the authentication header as a Bearer Token for all subsequent requests.
+1. Make sure docker is installed on your machine, then from the root directory run the following command to start the containers: `docker-compose up -d --build` once all the images build and start the endpoints should be accessable on `http://localhost:3000`
+2. Make a POST request to http://localhost:3000/auth/login with the following payload to get a token (I used postman for this) This should send back your authentication token which you'll add to the authentication header as a Bearer Token for all subsequent requests.
 ```json
 {
     "username": "admin",
@@ -11,29 +11,29 @@
 }
 ```
 
-3. #### You can add a device by making a POST request to `http://localhost:3000/api/devices` with the following payload:
+3. You can add a device by making a POST request to `http://localhost:3000/api/devices` with the following payload - serial must be unique and keep in mind the lat and lon will effect the timezone of the device which will effect the daily statistics
 ```json
 {
-    "serial": "098765", // Must be unique
-    "latitude": 47.6061, // latitude and longitude will change the timezone of the device which affects daily statistics
+    "serial": "098765",
+    "latitude": 47.6061,
     "longitude": -122.3328
 }
 ```
 
-4. #### To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload - Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
+4. To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload (Temp can be any floating point above absoluite zero and below 2000) - Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
 ```json
 {
-    "deviceId": {deviceId}, // The id of the device you created
-    "temperature": 45.44 // Any floating point number
+    "deviceId": "yourDeviceIdFromLastStep",
+    "temperature": 45.44
 }
 ```
 
 
-5. #### After adding some temperature readings to one or more device, you can get the current day's stats for a device by making a GET request to `http://localhost:3000/daily-stats/{deviceId}` which defaults to today, or request a specific day via `http://localhost:3000/daily-stats/{deviceId}?date=01-01-2024` where the date is in the format `DD-MM-YYYY`
+5. After adding some temperature readings to one or more device, you can get the current day's stats for a device by making a GET request to `http://localhost:3000/daily-stats/{deviceId}` which defaults to today, or request a specific day via `http://localhost:3000/daily-stats/{deviceId}?date=01-01-2024` where the date is in the format `DD-MM-YYYY`
 
-6. #### Run the tests with ```yarn test```
+6. Run the tests with ```yarn test```
 
-7. #### Feel free to try to break things. The requirements were met, and I added sensible validation but I may have missed something!
+7. Feel free to try to break things. The requirements were met, and I added sensible validation but I may have missed something!
 
 ## Technology Choices and Rationale
 
