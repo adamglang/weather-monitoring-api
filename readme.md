@@ -1,4 +1,4 @@
-# Weather Monitoring System: 
+huh# Weather Monitoring System: 
 
 ## Setup and run
 
@@ -20,7 +20,7 @@
 }
 ```
 
-4. To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload (Temp can be any floating point above absoluite zero and below 2000) - Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
+4. To create a temperature reading for a device make a POST request to `http://localhost:3000/api/temperature-readings` with the following payload (Temp can be any floating point above absoluite zero and below 2000) - Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone). you can also batch add readings by passing an array of them
 ```json
 {
     "deviceId": "yourDeviceIdFromLastStep",
