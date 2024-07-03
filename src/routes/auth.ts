@@ -1,9 +1,10 @@
 import express, {Request, Response, Router} from 'express';
 import jwt from 'jsonwebtoken';
+import {validateLoginRequest} from "./validators/auth.validator";
 
 const router: Router = express.Router();
 
-router.post('/login', async (req: Request, res: Response) => {
+router.post('/login', validateLoginRequest, async (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   // In a real application, we would fetch the user from the database

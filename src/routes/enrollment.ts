@@ -2,10 +2,11 @@ import express, {Router, Request, Response} from 'express';
 import { EnrollmentService } from '../services/enrollment.service';
 import {EnrolledDeviceDTO, EnrollmentRequestDTO} from '../types';
 import { authenticateToken } from '../middleware/auth';
+import {validateEnrollmentRequest} from "./validators/enrollment.validator";
 
 const router: Router = express.Router();
 
-router.post('/', authenticateToken, async (req: Request, res: Response): Promise<void> => {
+router.post('/', authenticateToken, validateEnrollmentRequest, async (req: Request, res: Response): Promise<void> => {
   try {
     const devices: EnrollmentRequestDTO | EnrollmentRequestDTO[] = req.body;
 

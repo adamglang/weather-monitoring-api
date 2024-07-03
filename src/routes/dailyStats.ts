@@ -3,11 +3,12 @@ import { PrismaClient } from '@prisma/client';
 import * as momentTimezone from 'moment-timezone';
 import { DailyTemperatureStatsRecord, EnrolledDeviceRecord } from "../types";
 import {Moment} from "moment-timezone";
+import {validateDailyStatsRequest} from "./validators/dailyStats.validator";
 
 const router: Router = express.Router();
 const prisma = new PrismaClient();
 
-router.get('/:deviceId', async (req: Request, res: Response): Promise<Response> => {
+router.get('/:deviceId', validateDailyStatsRequest, async (req: Request, res: Response): Promise<Response> => {
   try {
     const deviceId: string = req.params.deviceId;
     const dateQuery: string | undefined = req.query.date as string | undefined;
