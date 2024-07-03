@@ -7,7 +7,7 @@ import {
   TemperatureReadingDTO
 } from "../types";
 import * as momentTimezone from 'moment-timezone';
-import { Moment} from "moment-timezone";
+import { Moment } from "moment-timezone";
 
 const prisma = new PrismaClient();
 
@@ -42,24 +42,26 @@ async function processTemperatureReading(message: KafkaMessage): Promise<void> {
 
 async function updateDailyStats(device: EnrolledDeviceDTO, reading: TemperatureReadingDTO): Promise<void> {
   const deviceTime: Moment = momentTimezone.tz(reading.timestamp, device.timeZone);
-  const dateKey: string = deviceTime.format('YYYY-MM-DD');
+
+  // Create a date key that represents the start of the day in UTC
+  const utcDateKey: string = deviceTime.clone().utc().startOf('day').format('YYYY-MM-DD');
 
   const existingStats: DailyTemperatureStatsRecord = await prisma.daily_temperature_stats.findUnique({
     where: {
       deviceId_date: {
         deviceId: device.id,
-        date: new Date(dateKey)
+        date: new Date(utcDateKey)
       }
     }
   }) as DailyTemperatureStatsRecord;
 
-  // get length of all temperature readings for the day from the device
+  // Adjust the reading count query to use UTC dates
   const readingCount: number = await prisma.temperature_reading.count({
     where: {
       deviceId: device.id,
       timestamp: {
-        gte: new Date(dateKey),
-        lt: new Date(dateKey + 'T23:59:59.999Z')
+        gte: new Date(utcDateKey),
+        lt: new Date(deviceTime.clone().utc().endOf('day').format())
       }
     }
   });
@@ -89,7 +91,7 @@ async function updateDailyStats(device: EnrolledDeviceDTO, reading: TemperatureR
   } else {
     // Create new stats
     const payload: DailyTemperatureStatsDTO = {
-      date: new Date(dateKey),
+      date: new Date(utcDateKey), // This will now be the start of the UTC day
       highTemp: reading.temperature,
       lowTemp: reading.temperature,
       avgTemp: reading.temperature,
@@ -99,7 +101,6 @@ async function updateDailyStats(device: EnrolledDeviceDTO, reading: TemperatureR
     await prisma.daily_temperature_stats.create({ data: payload });
   }
 }
-
 
 async function startConsumer(): Promise<void> {
   await consumer.connect();

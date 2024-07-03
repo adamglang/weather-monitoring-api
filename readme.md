@@ -31,7 +31,7 @@ This should send back your authentication token which you'll add to the authenti
 ```
 Adding more of these will update the daily stats average, and possibly the daily low or high for that device for that day ("day" is midnight to the last second of the day in the device's timezone)
 
-- After adding some temperature readings to one or more device, you can get the daily stats for a device by making a GET request to `http://localhost:3000/api/devices/{deviceId}/daily-stats`
+- After adding some temperature readings to one or more device, you can get the current day's stats for a device by making a GET request to `http://localhost:3000/daily-stats/{deviceId}` or request a specific day via `http://localhost:3000/daily-stats/{deviceId}?date=01-01-2024` where the date is in the format `DD-MM-YYYY`
 
 
 ## Technology Choices and Rationale
