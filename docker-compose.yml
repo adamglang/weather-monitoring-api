@@ -19,7 +19,7 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
-    command: sh -c "yarn prisma migrate deploy && ./start.sh"
+    command: sh -c "yarn prisma migrate deploy && yarn start & yarn start:processor"
 
   db:
     image: timescale/timescaledb:latest-pg12
