@@ -32,7 +32,7 @@ This project implements a RESTful API service for a weather monitoring system, d
     ```
     POST http://localhost:3000/api/devices
     Body: [{
-      "serial": "384754",
+      "serial": "unique_serial_number",
       "latitude": 47.6061,
       "longitude": -122.3328
     }]
