@@ -31,11 +31,11 @@ This project implements a RESTful API service for a weather monitoring system, d
 2. Enroll a device:
     ```
     POST http://localhost:3000/api/devices
-    Body: {
-      "serial": "unique_serial_number",
+    Body: [{
+      "serial": "384754",
       "latitude": 47.6061,
       "longitude": -122.3328
-    }
+    }]
     ```
 
 3. Submit a temperature reading:
