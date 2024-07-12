@@ -7,9 +7,13 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=${DATABASE_URL}
-      - KAFKA_BROKER=kafka:9092
-      - PRISMA_SCHEMA_PATH=${PRISMA_SCHEMA_PATH}
+      - DB_USER=${DB_USER:-weather-monitoring-user}
+      - DB_PASSWORD=${DB_PASSWORD:-1234}
+      - DB_NAME=${DB_NAME:-weather_monitoring}
+      - DATABASE_URL=postgresql://${DB_USER:-weather-monitoring-user}:${DB_PASSWORD:-1234}@db:5432/${DB_NAME:-weather_monitoring}?schema=public
+      - KAFKA_BROKER=${KAFKA_BROKER:-kafka:9092}
+      - PRISMA_SCHEMA_PATH=${PRISMA_SCHEMA_PATH:-/usr/src/app/prisma/schema.prisma}
+      - JWT_SECRET=${JWT_SECRET:-ac96ba1f7447d4810cae914e5d675e4b02ed9fa8e527fa793844aa387123b77fc6ad72e38a3956fe563d23410e9b23dfc8a52ce38d2602f6c4dd415373a5f891}
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -26,13 +30,13 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER:-weather-monitoring-user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-1234}
+      - POSTGRES_DB=${DB_NAME:-weather_monitoring}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-weather-monitoring-user} -d ${DB_NAME:-weather_monitoring}" ]
       interval: 10s
       timeout: 5s
       retries: 5
